@@ -58,7 +58,7 @@ func main() {
 	byteCount := 0
 
 	var state State = Begin
-	var value uint
+	var codePoint uint
 
 	for {
 		n, err := os.Stdin.Read(buf[:])
@@ -77,23 +77,23 @@ func main() {
 		t, v := byteType(b)
 
 		if !(state == Begin || state == Fail) {
-			value <<= 6
+			codePoint <<= 6
 		}
-		value |= v
+		codePoint |= v
 
 		state = transitionTable[state][t]
 
 		switch state {
 		case Begin:
-			if unicode.IsPrint(rune(value)) {
-				fmt.Printf("Codepoint %6x %6d %c\n", value, value, value)
+			if unicode.IsPrint(rune(codePoint)) {
+				fmt.Printf("Codepoint %6x %6d %c\n", codePoint, codePoint, codePoint)
 			} else {
-				fmt.Printf("Codepoint %6x %6d %c\n", value, value, value)
+				fmt.Printf("Codepoint %6x %6d\n", codePoint, codePoint)
 			}
-			value = 0
+			codePoint = 0
 		case Fail:
 			fmt.Printf("Invalid UTF-8 byte value %x at byte number %d\n", b, byteCount)
-			value = 0
+			codePoint = 0
 		}
 
 	}
