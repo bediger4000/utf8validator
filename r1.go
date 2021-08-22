@@ -59,7 +59,7 @@ func main() {
 
 	var state State = Begin
 	var codePoint uint
-	validUTF8 := true
+	validUTF8 := true // is stream of bytes valid unicode or not?
 
 	for {
 		n, err := os.Stdin.Read(buf[:])
@@ -93,6 +93,7 @@ func main() {
 			}
 			codePoint = 0
 		case Fail:
+			// traditionally code point 0xfffd
 			fmt.Printf("Invalid UTF-8 byte value %x at byte number %d\n", b, byteCount)
 			codePoint = 0
 			validUTF8 = false
