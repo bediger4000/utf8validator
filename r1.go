@@ -15,6 +15,7 @@ Bytes   |           Byte format
    4     | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 */
 
+// States
 type State int
 
 const (
@@ -29,6 +30,8 @@ const (
 )
 
 // Byte prefixes
+type BytePrefix int
+
 const (
 	Ascii = iota
 	FirstOf2
@@ -38,10 +41,9 @@ const (
 	Other
 )
 
-type BytePrefix int
-
 // nextState = transitionTable[State][BytePrefix]
 var transitionTable = [][]State{
+	//                    Ascii FirstOf2 FirstOf3 FirstOf4 Subsequent Other
 	/* Fail     */ []State{Begin, Read1of2, Read1of3, Read1of4, Fail, Fail},
 	/* Begin    */ []State{Begin, Read1of2, Read1of3, Read1of4, Fail, Fail},
 	/* Read1of2 */ []State{Fail, Fail, Fail, Fail, Begin, Fail},
@@ -61,6 +63,8 @@ func main() {
 	var codePoint uint
 	validUTF8 := true // is stream of bytes valid unicode or not?
 
+	// This loop conflates reading stdin a byte at a time,
+	// and working the state machine.
 	for {
 		n, err := os.Stdin.Read(buf[:])
 		if n == 0 {
@@ -100,6 +104,7 @@ func main() {
 		}
 
 	}
+
 	phrase := "Valid"
 	if !validUTF8 {
 		phrase = "Invalid"
@@ -107,9 +112,14 @@ func main() {
 	fmt.Printf("%s UTF-8, Read %d bytes\n", phrase, byteCount)
 }
 
+// byteType returns one of the bit-prefix types,
+// and the value that's the rest of the byte.
 func byteType(b byte) (BytePrefix, uint) {
 	if (b>>7)&0b1 == 0 {
 		return Ascii, uint(b)
+	}
+	if (b>>6)&0b11 == 0b10 {
+		return Subsequent, uint(b & 0b00111111)
 	}
 	if (b>>5)&0b111 == 0b110 {
 		return FirstOf2, uint(b & 0b00011111)
@@ -117,11 +127,8 @@ func byteType(b byte) (BytePrefix, uint) {
 	if (b>>4)&0b1111 == 0b1110 {
 		return FirstOf3, uint(b & 0b00001111)
 	}
-	if (b>>4)&0b1111 == 0b1111 {
-		return FirstOf4, uint(b & 0b00001111)
-	}
-	if (b>>6)&0b11 == 0b10 {
-		return Subsequent, uint(b & 0b00111111)
+	if (b>>3)&0b11111 == 0b11110 {
+		return FirstOf4, uint(b & 0b00000111)
 	}
 
 	return Other, 0
