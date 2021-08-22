@@ -59,6 +59,7 @@ func main() {
 
 	var state State = Begin
 	var codePoint uint
+	validUTF8 := true
 
 	for {
 		n, err := os.Stdin.Read(buf[:])
@@ -94,10 +95,15 @@ func main() {
 		case Fail:
 			fmt.Printf("Invalid UTF-8 byte value %x at byte number %d\n", b, byteCount)
 			codePoint = 0
+			validUTF8 = false
 		}
 
 	}
-	fmt.Printf("Read %d bytes\n", byteCount)
+	phrase := "Valid"
+	if !validUTF8 {
+		phrase = "Invalid"
+	}
+	fmt.Printf("%s UTF-8, Read %d bytes\n", phrase, byteCount)
 }
 
 func byteType(b byte) (BytePrefix, uint) {
