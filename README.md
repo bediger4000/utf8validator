@@ -29,4 +29,13 @@ and returns whether it is a valid UTF-8 encoding.
 
 ## Analysis
 
+I chose to use a state machine:
+
+![UTF-8 validator state machine](states.png)
+
 ## Interview Analysis
+
+The problem statement doesn't cover the whole of UTF-8:
+a program can re-synchronize with a UTF-8 bytestream after encountering
+a goofed up code point.
+Some 0xxxxxxx bytes are also invalid: not all of ASCII is UTF-8.
