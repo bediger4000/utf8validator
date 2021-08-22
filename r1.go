@@ -76,14 +76,10 @@ func main() {
 
 		t, v := byteType(b)
 
-		switch state {
-		case Begin:
-			value = v
-		case Fail:
-			value = v
-		case Read1of2, Read1of3, Read1of4, Read2of3, Read2of4, Read3of4:
-			value = (value << 5) | value
+		if !(state == Begin || state == Fail) {
+			value <<= 6
 		}
+		value |= v
 
 		state = transitionTable[state][t]
 
@@ -105,19 +101,19 @@ func main() {
 }
 
 func byteType(b byte) (BytePrefix, uint) {
-	if b>>7 == 0 {
+	if (b>>7)&0b1 == 0 {
 		return Ascii, uint(b)
 	}
-	if b>>5 == 0b110 {
+	if (b>>5)&0b111 == 0b110 {
 		return FirstOf2, uint(b & 0b00011111)
 	}
-	if b>>4 == 0b1110 {
+	if (b>>4)&0b1111 == 0b1110 {
 		return FirstOf3, uint(b & 0b00001111)
 	}
-	if b>>4 == 0b1111 {
+	if (b>>4)&0b1111 == 0b1111 {
 		return FirstOf4, uint(b & 0b00001111)
 	}
-	if b>>6 == 0b10 {
+	if (b>>6)&0b11 == 0b10 {
 		return Subsequent, uint(b & 0b00111111)
 	}
 
