@@ -1,0 +1,37 @@
+digraph g {
+begin     [label="begin"];
+fail      [label="fail"];
+read1of2  [label="1 of 2"];
+read1of3  [label="1 of 3"];
+read2of3  [label="2 of 3"];
+read1of4  [label="1 of 4"];
+read2of4  [label="2 of 4"];
+read3of4  [label="3 of 4"];
+
+begin -> begin [label="0xxxxxxx"];
+fail -> begin  [label="0xxxxxxx"];
+
+begin -> read1of2 [label="110xxxxx"];
+read1of2 -> begin [label="10xxxxxx"];
+read1of2 -> fail [label="other",color="red",fontcolor="red"];
+
+begin -> read1of3    [label="1110xxxx"];
+read1of3 -> read2of3 [label="10xxxxxx"];
+read1of3 -> fail     [label="other",color="red",fontcolor="red"];
+read2of3 -> begin    [label="10xxxxxx"];
+read2of3 -> fail     [label="other",color="red",fontcolor="red"];
+
+begin    -> read1of4 [label="1110xxxx"];
+read1of4 -> read2of4 [label="10xxxxxx"];
+read1of4 -> fail     [label="other",color="red",fontcolor="red"];
+read2of4 -> read3of4 [label="10xxxxxx"];
+read2of4 -> fail     [label="other",color="red",fontcolor="red"];
+read3of4 -> begin    [label="10xxxxxx"];
+read3of4 -> fail     [label="other",color="red",fontcolor="red"];
+
+fail -> read1of2 [label="110xxxxx"];
+fail -> read1of3 [label="1110xxxx"];
+fail -> read1of4     [label="1110xxxx"];
+begin -> fail    [label="10xxxxxx",color="red",fontcolor="red"];
+
+}
