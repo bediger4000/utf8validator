@@ -58,8 +58,8 @@ A program could just check byte prefixes, and ensure that "subsequent bytes"
 (10xxxxxx pattern bytes) appear in the proper number.
 [Such a program](r2.go) can return false at the first incorrect byte prefix.
 It's much harder for this program to synchronize after a bad encoding.
-It also turns out to require about as much code,
-and it's code that looks error-prone.
+It also turns out to require about as much code, even though it does less.
+It's also code that looks error-prone.
 
 ## Interview Analysis
 
