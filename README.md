@@ -36,8 +36,15 @@ I chose to use a state machine:
 I chose to use a `Fail` state separate from `Begin`
 to allow my program to re-synchronize if bad byte(s) appear in
 its input.
+Re-synchronization shows up on the diagram above as transitions out of
+the Fail state.
+Transitions happen on input of a byte, and depend on the unfortunately
+variable-sized prefix bits, 0,  10, 110, 1110, 11110
+There's a catch all bucket of byte-prefixes, "other",
+anything that doesn't have one of those 5 prefixes.
 
 [My program](r1.go) also prints out code points as it finds them.
+Transitioning to Begin state means that it can print the code point.
 
 ```sh
 $ go build r1.go
