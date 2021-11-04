@@ -70,6 +70,23 @@ A single bad byte or even a stream of them doesn't keep a program
 like `xterm` from rendering the rest of the stream of bytes.
 The problem statement doesn't ask for what valid Unicode code points exist.
 
+Since at least two types of algorithms exist,
+a candidate could talk about software engineering issues
+when choosing between competing algorithms:
+how easy one algorithm is to code versus the other,
+the merits of state machinces,
+speed to market,
+ease of maintenance after the original developer leaves.
+
+Test cases don't suggest themselves based on the problem statement,
+which doesn't include synchronizing after a bad byte,
+and there are several cases to check there.
+The candidate should suggest a valid UTF-8 byte stream with 1, 2, 3 and 4-byte
+UTF-8 encodings,
+and some invalid byte streams,
+where the invalid byte occurs after a "110xxxxx", "110xxxx" and a "11110xxx" byte,
+and also a stream with an invalid byte futher out in the "subsequent byte" positions.
+
 I'm not sure this is a great interview problem in general:
 unless the candidate knows a fair amount about UTF-8,
 the interviewer is probably going to get a byte-prefix-checker.
@@ -80,12 +97,3 @@ The state machine implementation,
 while easy to reason about,
 is also not an "easy" programming task.
 This probably deserves a "medium" rating.
-
-Test cases don't suggest themselves based on the problem statement,
-which doesn't include synchronizing after a bad byte,
-and there are several cases to check there.
-The candidate should suggest a valid UTF-8 byte stream with 1, 2, 3 and 4-byte
-UTF-8 encodings,
-and some invalid byte streams,
-where the invalid byte occurs after a "110xxxxx", "110xxxx" and a "11110xxx" byte,
-and also a stream with an invalid byte futher out in the "subsequent byte" positions.
